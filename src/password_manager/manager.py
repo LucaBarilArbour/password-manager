@@ -35,4 +35,22 @@ def creation_master_password():
 
     return hashlib.sha256(mot_de_passe_confirmer.encode()).hexdigest()
 
-print(creation_master_password())
+def overture_base_de_donnee(path: str, mot_de_passe_hashed: str, mot_de_passe: str) -> str:
+    """
+    :param path: Le path vers l'emplacement du vault
+    :return: Le mot de passe hashed
+    """
+    vault = os.path.abspath(path + "/master.json")
+
+    with open(vault, "r") as vault_mdp:
+        master_mdp = json.load(vault_mdp)
+        
+    if master_mdp != mot_de_passe_hashed:
+        invalide = True
+        while invalide is True:
+            print("mot de passe incorect")
+            nouv_mdp_entre = prompt("Entré le mot de passe de nouveau: ", is_password=True)
+            if master_mdp == hashlib.sha256(nouv_mdp_entre.encode()).hexdigest():
+                invalide = False
+                return nouv_mdp_entre
+    return mot_de_passe
